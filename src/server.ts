@@ -6,6 +6,7 @@ import { env } from './config/env';
 import { API } from './config/constants';
 import { configureScriptRoutes } from './api/routes/script-routes';
 import { configureVoiceRoutes } from './api/routes/voice-routes';
+import { configureSyncRoutes } from './api/routes/sync-routes';
 import { errorHandler } from './api/middleware/error-handler';
 import { logger, PREFIXES } from './utils/logger';
 
@@ -20,6 +21,7 @@ function createApp(): Elysia {
   // Configure routes
   configureScriptRoutes(app);
   configureVoiceRoutes(app);
+  configureSyncRoutes(app);
   
   // Add health check endpoint
   app.get(API.ROUTES.HEALTH, () => ({ 

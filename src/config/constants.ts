@@ -8,7 +8,11 @@ export const API = {
     HEALTH: '/health',
     VOICE: '/voice',
     VOICE_GENERATE: '/voice/generate',
-    VOICE_WEBHOOK: '/voice/webhook'
+    VOICE_WEBHOOK: '/voice/webhook',
+    SYNC: '/sync',
+    SYNC_VOICE_OVER: '/sync/voice-over',
+    SYNC_GENERATE: '/sync/generate',
+    SYNC_PROCESS_COMPLETED: '/sync/process-completed'
   },
   RESPONSE: {
     SUCCESS: 'success',
