@@ -1,11 +1,11 @@
 /**
  * Section parser service for splitting scripts into sections
  */
-import { Section } from '../../types/script-types';
+import type { Section } from '../../types/script-types';
 import { logger, PREFIXES } from '../../utils/logger';
 
 /**
- * Service for parsing scripts into sections
+ * Service for parsing scripts into sections  
  */
 export class SectionParser {
   /**
