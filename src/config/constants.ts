@@ -5,7 +5,10 @@
 export const API = {
   ROUTES: {
     SCRIPT_PROCESSING: '/process-script',
-    HEALTH: '/health'
+    HEALTH: '/health',
+    VOICE: '/voice',
+    VOICE_GENERATE: '/voice/generate',
+    VOICE_WEBHOOK: '/voice/webhook'
   },
   RESPONSE: {
     SUCCESS: 'success',
@@ -19,6 +22,12 @@ export const VIDEO_SEARCH = {
   MAX_SEARCH_WORDS: 5
 };
 
+export const VOICE = {
+  DEFAULT_SPEED: 1,
+  DEFAULT_MODEL: 'tts-1',
+  DEFAULT_VOICE_ID: 'OA001' // Alloy voice
+};
+
 export const LOGGING = {
   LEVELS: {
     INFO: 'info',
@@ -30,6 +39,8 @@ export const LOGGING = {
     API: '🌐 API',
     SCRIPT: '📝 SCRIPT',
     VIDEO: '🎥 VIDEO',
+    VOICE: '🔊 VOICE',
+    SYNC: '🔄 SYNC',
     ERROR: '❌ ERROR',
     SUCCESS: '✅ SUCCESS'
   }
