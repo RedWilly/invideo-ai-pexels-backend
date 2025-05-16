@@ -12,11 +12,9 @@ import { logger, PREFIXES } from './utils/logger';
  * Create and configure the application
  */
 function createApp(): Elysia {
-  // Create the app
-  const app = new Elysia();
-  
-  // Apply error handling middleware
-  errorHandler(app);
+  // Create the app with error handling middleware
+  const app = new Elysia()
+    .use(errorHandler);
   
   // Configure routes
   configureScriptRoutes(app);
