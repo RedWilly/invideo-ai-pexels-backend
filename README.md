@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Script Processing API
 
-## Getting Started
+A backend API infrastructure similar to InVideo AI that processes scripts, splits them into sections and points, and finds relevant videos for each point using the Pexels API.
 
-First, run the development server:
+## Setup
+
+### Install dependencies
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+bun install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Configure Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Copy the `.env.example` file to `.env` and add your Pexels API key:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cp .env.example .env
+# Then edit the .env file with your API key
+```
 
-## Learn More
+### Run the API server
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# Production
+bun run start
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Development with hot reload
+bun run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The API will be available at http://localhost:3000
 
-## Deploy on Vercel
+## API Endpoints
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### POST /process-script
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Processes a script and finds relevant videos for each point.
+
+**Request Body:**
+
+```json
+{
+  "script": "Your full script text here...",
+  "tag": "history"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "sectionId": "section1",
+      "points": [
+        {
+          "text": "Welcome to a journey through time",
+          "videoId": "1234567",
+          "videoUrl": "https://www.pexels.com/video/1234567",
+          "videoThumbnail": "https://images.pexels.com/videos/1234567/thumbnail.jpg"
+        },
+        // More points...
+      ]
+    },
+    // More sections...
+  ]
+}
+```
+
+## How It Works
+
+1. The API receives a script and a tag
+2. It splits the script into sections (paragraphs)
+3. Each section is split into points using the `splitSection` function
+4. For each point, it searches for a relevant video on Pexels using the first few words of the point combined with the tag
+5. The API returns a structured response with all sections, points, and corresponding videos
+
+This project was created using `bun init` in bun v1.2.11. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
