@@ -4,7 +4,7 @@
 import { AssemblyAI } from 'assemblyai';
 import { env } from '../../config/env';
 import { logger, PREFIXES } from '../../utils/logger';
-import type { TranscriptResponse, TranscriptionParams, TranscriptWord, TextTiming } from './assembly-types';
+import type { TranscriptResponse, TranscriptionParams, TranscriptWord, TextTiming } from '../../types/assembly-types';
 
 /**
  * Client for interacting with the AssemblyAI API

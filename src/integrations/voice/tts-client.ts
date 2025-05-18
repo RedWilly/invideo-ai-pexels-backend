@@ -7,7 +7,7 @@ import { readFileSync } from 'fs';
 import path from 'path';
 import { env } from '../../config/env';
 import { logger, PREFIXES } from '../../utils/logger';
-import type { TTSRequest, TTSResponse, TTSWebhookPayload } from './tts-types';
+import type { TTSRequest, TTSResponse, TTSWebhookPayload } from '../../types/tts-types';
 
 /**
  * Client for interacting with the TTS OpenAI API
@@ -20,7 +20,7 @@ export class TTSClient {
   constructor(apiKey: string) {
     this.apiKey = apiKey;
     // Path to the public key file for signature verification
-    this.publicKeyPath = path.join(process.cwd(), 'src', '123', 'uapi_public_key.pem');
+    this.publicKeyPath = path.join(process.cwd(), 'src', 'key', 'uapi_public_key.pem');
   }
 
   /**

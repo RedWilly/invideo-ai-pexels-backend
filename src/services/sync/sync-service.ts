@@ -4,8 +4,8 @@
 import { AssemblyClient } from '../../integrations/sync/assembly-client';
 import { voiceService } from '../voice/voice-service';
 import { logger, PREFIXES } from '../../utils/logger';
-import type { VoiceOver } from '../../integrations/voice/tts-types';
-import type { TextTiming, PointWithTiming } from '../../integrations/sync/assembly-types';
+import type { VoiceOver } from '../../types/tts-types';
+import type { TextTiming, PointWithTiming } from '../../types/assembly-types';
 import type { ProcessedSection, PointWithVideo } from '../../types/script-types';
 
 /**

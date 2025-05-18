@@ -2,7 +2,7 @@
  * Voice service for generating and managing voice-overs
  */
 import { ttsClient } from '../../integrations/voice/tts-client';
-import type { VoiceOver } from '../../integrations/voice/tts-types';
+import type { VoiceOver } from '../../types/tts-types';
 import { logger, PREFIXES } from '../../utils/logger';
 
 /**
