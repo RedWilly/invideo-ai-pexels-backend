@@ -22,7 +22,10 @@ export function configureScriptRoutes(app: Elysia): Elysia {
     {
       body: t.Object({
         script: t.String(),
-        tag: t.String()
+        tag: t.String(),
+        generateVoiceOver: t.Optional(t.Boolean()),
+        voiceId: t.Optional(t.String()),
+        syncAudio: t.Optional(t.Boolean())
       })
     }
   );

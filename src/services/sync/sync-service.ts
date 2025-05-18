@@ -56,9 +56,27 @@ export class SyncService {
         pointTexts
       );
       
-      // Combine the timings with the point information
+      // Update the points in the section with timing information
+      for (let i = 0; i < section.points.length; i++) {
+        const point = section.points[i];
+        if (point) {
+          const timing = timings[i] || {
+            text: point.text,
+            startTime: 0,
+            endTime: 0,
+            duration: 0
+          };
+          
+          // Add timing information directly to the point
+          point.startTime = timing.startTime;
+          point.endTime = timing.endTime;
+        }
+      }
+      
+      logger.info(PREFIXES.SYNC, `Successfully updated ${section.points.length} points with timing information`);
+      
+      // Also create and return the PointWithTiming array for backward compatibility
       const pointsWithTiming: PointWithTiming[] = section.points.map((point, index) => {
-        // Make sure we have timing information for this point
         const timing = timings[index] || {
           text: point.text,
           startTime: 0,
@@ -76,8 +94,6 @@ export class SyncService {
           duration: timing.duration
         };
       });
-      
-      logger.info(PREFIXES.SYNC, `Successfully synchronized ${pointsWithTiming.length} points with timing`);
       
       return pointsWithTiming;
     } catch (error) {

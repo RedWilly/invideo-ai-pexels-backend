@@ -19,6 +19,8 @@ export interface PointWithVideo {
   videoId: string;
   videoUrl: string;
   videoThumbnail: string;
+  startTime?: number;  // Start time of this point in the audio (in milliseconds)
+  endTime?: number;    // End time of this point in the audio (in milliseconds)
 }
 
 /**
@@ -26,6 +28,8 @@ export interface PointWithVideo {
  */
 export interface ProcessedSection {
   sectionId: string;
+  voiceOverId?: string;  // ID of the voice-over for this section
+  audioUrl?: string;     // URL to the voice-over audio for this section
   points: PointWithVideo[];
 }
 
@@ -35,6 +39,9 @@ export interface ProcessedSection {
 export interface ScriptProcessingRequest {
   script: string;
   tag: string;
+  generateVoiceOver?: boolean;  // Whether to generate voice-overs for sections
+  voiceId?: string;  // Voice ID to use for voice-overs
+  syncAudio?: boolean;  // Whether to synchronize voice-overs with points
 }
 
 /**

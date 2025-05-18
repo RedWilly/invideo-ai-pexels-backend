@@ -49,26 +49,10 @@ export class VoiceController {
     logger.info(PREFIXES.API, 'Received TTS webhook callback');
     
     try {
-      // Get the signature from the headers
-      const signature = headers['x-signature'];
+      // Skip signature validation as requested
+      logger.info(PREFIXES.API, 'Skipping signature validation for webhook');
       
-      if (!signature) {
-        logger.warn(PREFIXES.API, 'Missing signature in webhook request');
-        throw new Error('Missing signature');
-      }
-      
-      // Verify the signature
-      const isValid = ttsClient.verifyWebhookSignature(
-        JSON.stringify(body),
-        signature
-      );
-      
-      if (!isValid) {
-        logger.warn(PREFIXES.API, 'Invalid signature in webhook request');
-        throw new Error('Invalid signature');
-      }
-      
-      // Process the webhook payload
+      // Process the webhook payload directly
       const result = ttsClient.processWebhookPayload(body);
       
       // Update the voice-over status

@@ -1,0 +1,44 @@
+{
+  "success": true,
+  "data": [
+    {
+      "sectionId": "section1",
+      "points": [
+        {
+          "text": "When we turn to the Hebrew Bible",
+          "videoId": "5283826",
+          "videoUrl": "https://www.pexels.com/video/pages-of-a-book-being-flipped-5283826/",
+          "videoThumbnail": "https://images.pexels.com/videos/5283826/pexels-photo-5283826.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
+          "startTime": 160,
+          "endTime": 1360
+        },
+        {
+          "text": "we discover hints that Adam might not be the sole origin of humanity.",
+          "videoId": "5845260",
+          "videoUrl": "https://www.pexels.com/video/tourists-near-a-japanese-temple-5845260/",
+          "videoThumbnail": "https://images.pexels.com/videos/5845260/pexels-photo-5845260.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
+          "startTime": 1360,
+          "endTime": 5200
+        },
+        {
+          "text": "In Genesis Chapter One, verses twenty-six and twenty-seven, the text speaks of",
+          "videoId": "2750158",
+          "videoUrl": "https://www.pexels.com/video/person-typing-using-an-old-typewriter-2750158/",
+          "videoThumbnail": "https://images.pexels.com/videos/2750158/free-video-2750158.jpg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
+          "startTime": 6240,
+          "endTime": 10840
+        },
+        {
+          "text": "“Let us make humankind in our image,” suggesting a divine council at work.",
+          "videoId": "5423921",
+          "videoUrl": "https://www.pexels.com/video/low-angle-shot-of-the-statue-of-liberty-5423921/",
+          "videoThumbnail": "https://images.pexels.com/videos/5423921/pexels-photo-5423921.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
+          "startTime": 10840,
+          "endTime": 15360
+        }
+      ],
+      "voiceOverId": "8543566e-33f7-11f0-8e77-ba82180b3cc5",
+      "audioUrl": "https://87c129bea46e5e69d2d92f9b9ef83ca8.r2.cloudflarestorage.com/cdk-ttsopenai-gpt-prod-upload-bucket/flare_uploaded/663437/20250518_145104_336069/When_we_turn_to_the_Hebrew_Bible_we_discover_hints.mp3?response-content-type=application%2Foctet-stream&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=c059c5e08a0dd199cb0fb22ee31dad1b%2F20250518%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250518T145120Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=b4440ee2629fca6e060cd8f9b8336de2b4abbd600c097790d6aa2e49cb92d3d0"
+    }
+  ]
+}

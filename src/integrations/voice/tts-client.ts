@@ -92,19 +92,27 @@ export class TTSClient {
    * @param payload The webhook payload
    * @returns The processed webhook data
    */
-  processWebhookPayload(payload: TTSWebhookPayload): {
+  processWebhookPayload(payload: any): {
     uuid: string;
     success: boolean;
     audioUrl?: string;
     error?: string;
   } {
-    const { event, uuid, data } = payload;
+    // Extract event and data from the payload
+    const { event, uuid: topLevelUuid, data } = payload;
     
-    logger.info(PREFIXES.API, `TTS: Received webhook event ${event} for UUID ${uuid}`);
+    // Use data.uuid if available, otherwise use the top-level uuid
+    const uuid = data?.uuid || topLevelUuid;
     
-    const success = event === 'TTS_TEXT_SUCCESS';
+    logger.info(PREFIXES.API, `TTS: Received webhook event ${event || 'undefined'} for UUID ${uuid}`);
     
-    if (success) {
+    // Consider success if either:
+    // 1. event is TTS_TEXT_SUCCESS, or
+    // 2. event is undefined but there's a valid media_url and status is 2 (completed)
+    const success = event === 'TTS_TEXT_SUCCESS' || 
+                   (data?.media_url && data?.status === 2);
+    
+    if (success && data?.media_url) {
       logger.info(PREFIXES.API, `TTS: Speech generation successful. Audio URL: ${data.media_url}`);
       return {
         uuid,
@@ -112,11 +120,12 @@ export class TTSClient {
         audioUrl: data.media_url
       };
     } else {
-      logger.error(PREFIXES.ERROR, `TTS: Speech generation failed: ${data.error_message}`);
+      const errorMessage = data?.error_message || 'Unknown error';
+      logger.error(PREFIXES.ERROR, `TTS: Speech generation failed: ${errorMessage}`);
       return {
         uuid,
         success: false,
-        error: data.error_message
+        error: errorMessage
       };
     }
   }
