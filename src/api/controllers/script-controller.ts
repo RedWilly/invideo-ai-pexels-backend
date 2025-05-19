@@ -51,9 +51,26 @@ export class ScriptController {
         logger.info(PREFIXES.API, `- Sections with voice-overs: ${sectionsWithVoiceOvers}/${result.length}`);
       }
       
+      // Clean up the response by removing internal fields and videoUrl
+      const cleanedResult = result.map(section => {
+        // Create a new object without sectionOffset and sectionEndTime
+        const { sectionOffset, sectionEndTime, ...cleanedSection } = section;
+        
+        // Remove videoUrl from each point
+        const cleanedPoints = section.points.map(point => {
+          const { videoUrl, ...cleanedPoint } = point;
+          return cleanedPoint;
+        });
+        
+        return {
+          ...cleanedSection,
+          points: cleanedPoints
+        };
+      });
+      
       return { 
         success: true, 
-        data: result 
+        data: cleanedResult 
       };
     } catch (error) {
       logger.error(PREFIXES.API, 'Error processing script', error);

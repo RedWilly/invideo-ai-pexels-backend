@@ -56,7 +56,7 @@ export interface TextTiming {
 export interface PointWithTiming {
   text: string;
   videoId: string;
-  videoUrl: string;
+  videoUrl?: string;  // Making this optional so we can exclude it from the API response
   videoThumbnail: string;
   startTime: number;
   endTime: number;

@@ -8,6 +8,9 @@ import type { VoiceOver } from '../../types/tts-types';
 import type { TextTiming, PointWithTiming } from '../../types/assembly-types';
 import type { ProcessedSection, PointWithVideo } from '../../types/script-types';
 
+// Buffer time to add at the end of each section (in milliseconds)
+const SECTION_END_BUFFER = 700;
+
 /**
  * Service for synchronizing voice-overs with videos
  */
@@ -16,11 +19,13 @@ export class SyncService {
    * Synchronize a voice-over with points to create timed points
    * @param voiceOverId The ID of the voice-over
    * @param section The processed section with points and videos
+   * @param previousSectionEndTime Optional end time of the previous section for continuous timing
    * @returns Points with timing information
    */
   async synchronizeVoiceOverWithPoints(
     voiceOverId: string,
-    section: ProcessedSection
+    section: ProcessedSection,
+    previousSectionEndTime?: number
   ): Promise<PointWithTiming[]> {
     try {
       logger.info(PREFIXES.SYNC, `Synchronizing voice-over ${voiceOverId} with ${section.points.length} points`);
@@ -56,42 +61,88 @@ export class SyncService {
         pointTexts
       );
       
-      // Update the points in the section with timing information
+      // Set the section offset based on previous section end time or default to 0
+      section.sectionOffset = previousSectionEndTime || 0;
+      
+      // Store the original timings for reference
+      const originalTimings = timings.map(timing => ({ ...timing }));
+      
+      // First pass: Set start times for all points
       for (let i = 0; i < section.points.length; i++) {
         const point = section.points[i];
-        if (point) {
-          const timing = timings[i] || {
-            text: point.text,
-            startTime: 0,
-            endTime: 0,
-            duration: 0
-          };
-          
-          // Add timing information directly to the point
-          point.startTime = timing.startTime;
-          point.endTime = timing.endTime;
+        if (!point) continue;
+        
+        if (i === 0) {
+          // First point in section starts at the section offset
+          point.startTime = section.sectionOffset;
+        } else {
+          // Other points start at the end time of the previous point
+          const prevPoint = section.points[i - 1];
+          if (prevPoint && prevPoint.endTime !== undefined) {
+            point.startTime = prevPoint.endTime;
+          } else {
+            // Fallback to original timing if previous point is not available
+            const originalTiming = originalTimings[i] || { startTime: 0, endTime: 0 };
+            point.startTime = section.sectionOffset + originalTiming.startTime;
+          }
         }
       }
       
-      logger.info(PREFIXES.SYNC, `Successfully updated ${section.points.length} points with timing information`);
-      
-      // Also create and return the PointWithTiming array for backward compatibility
-      const pointsWithTiming: PointWithTiming[] = section.points.map((point, index) => {
-        const timing = timings[index] || {
-          text: point.text,
-          startTime: 0,
-          endTime: 0,
-          duration: 0
-        };
+      // Second pass: Set end times for all points
+      for (let i = 0; i < section.points.length; i++) {
+        const point = section.points[i];
+        if (!point) continue;
         
+        if (i < section.points.length - 1) {
+          // If not the last point, end time is the start time of the next point
+          const nextPoint = section.points[i + 1];
+          if (nextPoint && nextPoint.startTime !== undefined) {
+            point.endTime = nextPoint.startTime;
+          } else {
+            // Fallback to original timing if next point is not available
+            const originalTiming = originalTimings[i] || { startTime: 0, endTime: 0 };
+            const originalDuration = originalTiming.endTime - originalTiming.startTime;
+            point.endTime = (point.startTime || 0) + originalDuration;
+          }
+        } else {
+          // Last point in section - use original end time plus section offset
+          const originalTiming = originalTimings[i] || { startTime: 0, endTime: 0 };
+          const originalDuration = originalTiming.endTime - originalTiming.startTime;
+          point.endTime = (point.startTime || 0) + originalDuration;
+        }
+      }
+      
+      // Add buffer to the last point's endTime instead of using a separate sectionEndTime field
+      const lastPoint = section.points[section.points.length - 1];
+      if (lastPoint && lastPoint.endTime !== undefined) {
+        // Add buffer directly to the last point's endTime
+        lastPoint.endTime += SECTION_END_BUFFER;
+        
+        // Still track sectionEndTime internally for continuous timing between sections
+        section.sectionEndTime = lastPoint.endTime;
+      } else {
+        // Fallback if no points or last point has no end time
+        // Create a safe lastTiming object with default values if originalTimings is empty
+        const lastTiming = originalTimings.length > 0 ? originalTimings[originalTimings.length - 1] : { startTime: 0, endTime: 0 };
+        // Use nullish coalescing to handle potential undefined values
+        const offset = section.sectionOffset ?? 0;
+        const endTime = lastTiming?.endTime ?? 0;
+        section.sectionEndTime = offset + endTime + SECTION_END_BUFFER;
+      }
+      
+      logger.info(PREFIXES.SYNC, `Successfully updated ${section.points.length} points with timing information`);
+      logger.info(PREFIXES.SYNC, `Section ${section.sectionId} timing: offset=${section.sectionOffset}ms, end=${section.sectionEndTime}ms`);
+      
+      // Create and return PointWithTiming array for backward compatibility
+      const pointsWithTiming: PointWithTiming[] = section.points.map((point, index) => {
         return {
           text: point.text,
           videoId: point.videoId,
           videoUrl: point.videoUrl,
           videoThumbnail: point.videoThumbnail,
-          startTime: timing.startTime,
-          endTime: timing.endTime,
-          duration: timing.duration
+          startTime: point.startTime || 0,
+          endTime: point.endTime || 0,
+          duration: (point.endTime || 0) - (point.startTime || 0)
         };
       });
       
@@ -138,11 +189,13 @@ export class SyncService {
    * Process a completed voice-over and synchronize it with points
    * @param voiceOverId The ID of the completed voice-over
    * @param section The processed section with points and videos
+   * @param previousSectionEndTime Optional end time of the previous section for continuous timing
    * @returns Points with timing information
    */
   async processCompletedVoiceOver(
     voiceOverId: string,
-    section: ProcessedSection
+    section: ProcessedSection,
+    previousSectionEndTime?: number
   ): Promise<PointWithTiming[] | null> {
     try {
       const voiceOver = voiceService.getVoiceOver(voiceOverId);
@@ -155,8 +208,8 @@ export class SyncService {
         return null;
       }
       
-      // Synchronize the voice-over with the points
-      return await this.synchronizeVoiceOverWithPoints(voiceOverId, section);
+      // Synchronize the voice-over with the points, passing the previous section end time
+      return await this.synchronizeVoiceOverWithPoints(voiceOverId, section, previousSectionEndTime);
     } catch (error) {
       logger.error(PREFIXES.ERROR, `Error processing completed voice-over ${voiceOverId}`, error);
       return null;

@@ -47,6 +47,8 @@ export class ScriptService {
         logger.info(PREFIXES.SCRIPT, 'Starting voice-over generation');
         
         // Process each section for voice generation
+        let previousSectionEndTime = 0; // Track the end time of the previous section
+      
         for (let i = 0; i < processedSections.length; i++) {
           const section = processedSections[i];
           
@@ -80,15 +82,21 @@ export class ScriptService {
               // Step 5 (Optional): Synchronize voice-over with points
               if (syncAudio) {
                 logger.info(PREFIXES.SCRIPT, `Synchronizing voice-over for section ${section.sectionId}`);
+                logger.info(PREFIXES.SCRIPT, `Using previous section end time: ${previousSectionEndTime}ms`);
                 
-                // Synchronize the voice-over with the points
-                const pointsWithTiming = await syncService.synchronizeVoiceOverWithPoints(voiceOver.id, section);
+                // Synchronize the voice-over with the points, passing the previous section end time
+                const pointsWithTiming = await syncService.synchronizeVoiceOverWithPoints(
+                  voiceOver.id, 
+                  section, 
+                  previousSectionEndTime
+                );
                 
                 if (pointsWithTiming) {
-                  // Update the points with timing information
-                  // Note: This would typically update a different field in the response
-                  // For simplicity, we're just logging that it was successful
+                  // Update the previous section end time for the next section
+                  previousSectionEndTime = section.sectionEndTime || 0;
+                  
                   logger.info(PREFIXES.SCRIPT, `Successfully synchronized ${pointsWithTiming.length} points with timing`);
+                  logger.info(PREFIXES.SCRIPT, `Section ${section.sectionId} ends at ${previousSectionEndTime}ms`);
                 }
               }
             }

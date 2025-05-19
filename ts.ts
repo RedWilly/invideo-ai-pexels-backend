@@ -5,7 +5,7 @@ const client = new AssemblyAI({
 });
 
 // const audioFile = './local_file.mp3'
-const audioFile = "https://87c129bea46e5e69d2d92f9b9ef83ca8.r2.cloudflarestorage.com/cdk-ttsopenai-gpt-prod-upload-bucket/flare_uploaded/663437/20250518_105654_456136/When_we_turn_to_the_Hebrew_Bible__we_discover_hint.mp3?response-content-type=application%2Foctet-stream&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=c059c5e08a0dd199cb0fb22ee31dad1b%2F20250518%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250518T105703Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=8c6c235c1931243fd9b46073a96656102931a1da570a29e49e0b6a63b32e075b";
+const audioFile = "https://87c129bea46e5e69d2d92f9b9ef83ca8.r2.cloudflarestorage.com/cdk-ttsopenai-gpt-prod-upload-bucket/flare_uploaded/663437/20250519_180822_560875/Welcome_to_a_journey_through_time_that_stretches_f.mp3?response-content-type=application%2Foctet-stream&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=c059c5e08a0dd199cb0fb22ee31dad1b%2F20250519%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250519T180831Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=5282a58bcd7f8389f58cba14c209dac7c7d578114253767a5bd538bd88c0a66e";
 
 const params = { 
   audio: audioFile 
