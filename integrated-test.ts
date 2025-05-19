@@ -41,7 +41,7 @@ async function main() {
     console.log(`Read script (${script.length} characters)`);
     
     // Process the script with voice generation and synchronization
-    const apiUrl = 'http://localhost:3000/process-script';
+    const apiUrl = 'http://localhost:3001/process-script';
     const requestData = {
       script,
       tag: 'history',

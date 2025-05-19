@@ -14,7 +14,7 @@ interface EnvConfig {
  */
 export function getEnvConfig(): EnvConfig {
   // Get environment variables with defaults
-  const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+  const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
   const PEXELS_API_KEY = process.env.PEXELS_API_KEY || '';
 
   const OPENAITTS_API_KEY = process.env.OPENAITTS_API_KEY || '';

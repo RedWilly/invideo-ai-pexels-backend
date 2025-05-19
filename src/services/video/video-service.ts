@@ -10,12 +10,24 @@ import { logger, PREFIXES } from '../../utils/logger';
  * Service for video-related operations
  */
 export class VideoService {
+  // Cache to store videos by ID for quick retrieval
+  private videoCache: Map<string, VideoResult> = new Map();
+  
   /**
    * Find a video for a specific point using search API
    * @param point The text point to search for
    * @param tag The tag to append to the search
    * @returns A video result or null if not found
    */
+  /**
+   * Get a video by its ID from the cache
+   * @param videoId The ID of the video to retrieve
+   * @returns The video result or undefined if not found
+   */
+  getVideoById(videoId: string): VideoResult | undefined {
+    return this.videoCache.get(videoId);
+  }
+  
   async findVideoForPoint(point: string, tag: string): Promise<VideoResult | null> {
     try {
       logger.info(PREFIXES.VIDEO, `Searching video for point: "${point.substring(0, 40)}..."`);
@@ -33,6 +45,8 @@ export class VideoService {
       
       if (video) {
         logger.info(PREFIXES.VIDEO, `Found video ID: ${video.id} for point`);
+        // Store the video in the cache for later retrieval
+        this.videoCache.set(video.id, video);
         return video;
       } else {
         logger.warn(PREFIXES.VIDEO, `No video found for point: "${point.substring(0, 40)}..."`);

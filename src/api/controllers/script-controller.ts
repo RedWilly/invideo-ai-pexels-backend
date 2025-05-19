@@ -51,15 +51,25 @@ export class ScriptController {
         logger.info(PREFIXES.API, `- Sections with voice-overs: ${sectionsWithVoiceOvers}/${result.length}`);
       }
       
-      // Clean up the response by removing internal fields and videoUrl
+      // Clean up the response by removing internal fields and replacing videoUrl with directUrl
       const cleanedResult = result.map(section => {
         // Create a new object without sectionOffset and sectionEndTime
         const { sectionOffset, sectionEndTime, ...cleanedSection } = section;
         
-        // Remove videoUrl from each point
+        // Replace videoUrl with directUrl in each point
         const cleanedPoints = section.points.map(point => {
-          const { videoUrl, ...cleanedPoint } = point;
-          return cleanedPoint;
+          // Get the directUrl from the video service if available
+          const videoService = require('../../services/video/video-service').videoService;
+          const video = videoService.getVideoById(point.videoId);
+          
+          // Use the direct download URL instead of the Pexels website URL
+          const videoUrl = video && video.directUrl ? video.directUrl : undefined;
+          
+          // Return point with videoUrl set to the direct download URL
+          return {
+            ...point,
+            videoUrl
+          };
         });
         
         return {

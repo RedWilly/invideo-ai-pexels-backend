@@ -7,7 +7,8 @@
  */
 export interface VideoResult {
   id: string;
-  url: string;
+  url: string;         // URL to the Pexels website page
+  directUrl: string;   // Direct download URL for the video file (HD or SD)
   width: number;
   height: number;
   duration: number;
