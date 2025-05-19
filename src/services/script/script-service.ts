@@ -72,7 +72,7 @@ export class ScriptService {
             section.voiceOverId = voiceOver.id;
             
             // Wait for voice-over to complete (in a real-world scenario, this would be handled by a webhook)
-            // For demo purposes, we'll poll for completion
+            // For demo purposes, we'll poll for completion indefinitely until it completes or fails
             let completedVoiceOver = await this.waitForVoiceOverCompletion(voiceOver.id);
             
             if (completedVoiceOver && completedVoiceOver.audioUrl) {
@@ -120,12 +120,15 @@ export class ScriptService {
   /**
    * Wait for a voice-over to complete
    * @param voiceOverId The ID of the voice-over to wait for
-   * @returns The completed voice-over or null if it times out
+   * @param delayMs Delay between status checks in milliseconds
+   * @returns The completed voice-over or null if it fails
    */
-  private async waitForVoiceOverCompletion(voiceOverId: string, maxAttempts = 10, delayMs = 1000) {
+  private async waitForVoiceOverCompletion(voiceOverId: string, delayMs = 1000) {
     logger.info(PREFIXES.SCRIPT, `Waiting for voice-over ${voiceOverId} to complete`);
     
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    let waitingTime = 0; // Track total waiting time for logging purposes
+    
+    while (true) { // Continue indefinitely until voice-over completes or fails
       // Get the current status of the voice-over
       const voiceOver = voiceService.getVoiceOver(voiceOverId);
       
@@ -135,7 +138,7 @@ export class ScriptService {
       }
       
       if (voiceOver.status === 'completed' && voiceOver.audioUrl) {
-        logger.info(PREFIXES.SCRIPT, `Voice-over ${voiceOverId} completed successfully`);
+        logger.info(PREFIXES.SCRIPT, `Voice-over ${voiceOverId} completed successfully after ${waitingTime / 1000} seconds`);
         return voiceOver;
       }
       
@@ -145,12 +148,11 @@ export class ScriptService {
       }
       
       // Wait before checking again
-      logger.info(PREFIXES.SCRIPT, `Voice-over ${voiceOverId} still processing (attempt ${attempt + 1}/${maxAttempts})`);
+      waitingTime += delayMs;
+      const waitingSeconds = Math.floor(waitingTime / 1000);
+      logger.info(PREFIXES.SCRIPT, `Voice-over ${voiceOverId} still processing (waiting for ${waitingSeconds} seconds)`);
       await new Promise(resolve => setTimeout(resolve, delayMs));
     }
-    
-    logger.warn(PREFIXES.SCRIPT, `Timed out waiting for voice-over ${voiceOverId} to complete`);
-    return null;
   }
   
   /**
