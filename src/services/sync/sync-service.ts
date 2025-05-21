@@ -9,7 +9,7 @@ import type { TextTiming, PointWithTiming, TranscriptWord } from '../../types/as
 import type { ProcessedSection, PointWithVideo } from '../../types/script-types';
 
 // Buffer time to add at the end of each section (in milliseconds)
-const SECTION_END_BUFFER = 700;
+const SECTION_END_BUFFER = 500;
 
 /**
  * Service for synchronizing voice-overs with videos
@@ -163,9 +163,9 @@ export class SyncService {
           videoId: point.videoId,
           videoUrl: point.videoUrl,
           videoThumbnail: point.videoThumbnail,
-          startTime: point.startTime || 0,
-          endTime: point.endTime || 0,
-          duration: (point.endTime || 0) - (point.startTime || 0)
+          startTime: Math.round(point.startTime || 0),
+          endTime: Math.round(point.endTime || 0),
+          duration: Math.round((point.endTime || 0) - (point.startTime || 0))
         };
       });
       

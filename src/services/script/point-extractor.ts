@@ -1,7 +1,7 @@
 /**
  * Point extractor service for splitting sections into points
  */
-import { Section } from '../../types/script-types';
+import type { Section } from '../../types/script-types';
 import { splitSection } from '../../utils/text-processing';
 import { logger, PREFIXES } from '../../utils/logger';
 
@@ -45,6 +45,30 @@ export class PointExtractor {
    */
   extractPointsFromSections(sections: Section[]): Section[] {
     return sections.map(section => this.extractPointsFromSection(section));
+  }
+  
+  /**
+   * Extract points directly from text
+   * @param text The text to extract points from
+   * @returns Array of points (strings)
+   */
+  extractPointsFromText(text: string): string[] {
+    logger.info(PREFIXES.SCRIPT, `Extracting points from text (${text.length} characters)`);
+    
+    // Extract points using the splitSection utility
+    const points = splitSection(text);
+    
+    logger.info(PREFIXES.SCRIPT, `Split into ${points.length} points`);
+    
+    // Log the points (truncated for readability)
+    points.forEach((point, idx) => {
+      logger.debug(
+        PREFIXES.SCRIPT, 
+        `  ${idx + 1}. ${point.substring(0, 60)}${point.length > 60 ? '...' : ''}`
+      );
+    });
+    
+    return points;
   }
 }
 
