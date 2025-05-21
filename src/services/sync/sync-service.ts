@@ -5,7 +5,7 @@ import { AssemblyClient } from '../../integrations/sync/assembly-client';
 import { voiceService } from '../voice/voice-service';
 import { logger, PREFIXES } from '../../utils/logger';
 import type { VoiceOver } from '../../types/tts-types';
-import type { TextTiming, PointWithTiming } from '../../types/assembly-types';
+import type { TextTiming, PointWithTiming, TranscriptWord } from '../../types/assembly-types';
 import type { ProcessedSection, PointWithVideo } from '../../types/script-types';
 
 // Buffer time to add at the end of each section (in milliseconds)
@@ -20,41 +20,64 @@ export class SyncService {
    * @param voiceOverId The ID of the voice-over
    * @param section The processed section with points and videos
    * @param previousSectionEndTime Optional end time of the previous section for continuous timing
+   * @param existingTranscript Optional existing transcript (to avoid transcribing again)
    * @returns Points with timing information
    */
   async synchronizeVoiceOverWithPoints(
     voiceOverId: string,
     section: ProcessedSection,
-    previousSectionEndTime?: number
+    previousSectionEndTime?: number,
+    existingTranscript?: { text: string; words: TranscriptWord[] | undefined }
   ): Promise<PointWithTiming[]> {
     try {
       logger.info(PREFIXES.SYNC, `Synchronizing voice-over ${voiceOverId} with ${section.points.length} points`);
       
-      // Get the voice-over
-      const voiceOver = voiceService.getVoiceOver(voiceOverId);
+      let transcript;
       
-      if (!voiceOver) {
-        throw new Error(`Voice-over with ID ${voiceOverId} not found`);
-      }
-      
-      if (voiceOver.status !== 'completed' || !voiceOver.audioUrl) {
-        throw new Error(`Voice-over ${voiceOverId} is not completed or has no audio URL`);
-      }
-      
-      // Create an instance of the AssemblyClient
-      const assemblyClient = new AssemblyClient(process.env.ASSEMBLYAI_API_KEY || '');
-      
-      // Transcribe the audio to get word-level timing
-      const transcript = await assemblyClient.transcribeAudio(voiceOver.audioUrl);
-      
-      if (!transcript.words || transcript.words.length === 0) {
-        throw new Error('Transcription did not return word-level details');
+      // If we already have a transcript, use it
+      if (existingTranscript && existingTranscript.words && existingTranscript.words.length > 0) {
+        logger.info(PREFIXES.SYNC, 'Using existing transcript for synchronization');
+        transcript = existingTranscript;
+      } else {
+        // Otherwise, get the voice-over and transcribe it
+        logger.info(PREFIXES.SYNC, 'No existing transcript provided, transcribing voice-over');
+        
+        // Get the voice-over
+        const voiceOver = voiceService.getVoiceOver(voiceOverId);
+        
+        if (!voiceOver) {
+          throw new Error(`Voice-over with ID ${voiceOverId} not found`);
+        }
+        
+        if (voiceOver.status !== 'completed' || !voiceOver.audioUrl) {
+          throw new Error(`Voice-over ${voiceOverId} is not completed or has no audio URL`);
+        }
+        
+        // Create an instance of the AssemblyClient
+        const assemblyClient = new AssemblyClient(process.env.ASSEMBLYAI_API_KEY || '');
+        
+        // Transcribe the audio to get word-level timing
+        transcript = await assemblyClient.transcribeAudio(voiceOver.audioUrl);
+        
+        if (!transcript.words || transcript.words.length === 0) {
+          throw new Error('Transcription did not return word-level details');
+        }
+        
+        logger.info(PREFIXES.SYNC, `Transcribed voice-over with ${transcript.words.length} words`);
       }
       
       // Extract the text from each point
       const pointTexts = section.points.map(point => point.text);
       
       // Match the point texts with the transcription to get timing
+      // Create an AssemblyClient instance if we don't already have one
+      const assemblyClient = new AssemblyClient(process.env.ASSEMBLYAI_API_KEY || '');
+      
+      // Make sure transcript.words is defined before using it
+      if (!transcript.words) {
+        throw new Error('Transcript words are undefined');
+      }
+      
       const timings = assemblyClient.matchTextWithTiming(
         transcript.text,
         transcript.words,

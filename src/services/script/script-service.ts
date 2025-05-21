@@ -9,10 +9,12 @@ import type {
 } from '../../types/script-types';
 import { sectionParser } from './section-parser';
 import { pointExtractor } from './point-extractor';
+import { transcriptSegmenter } from './transcript-segmenter';
 import { videoService } from '../video/video-service';
 import { voiceService } from '../voice/voice-service';
 import { syncService } from '../sync/sync-service';
 import { logger, PREFIXES } from '../../utils/logger';
+import { AssemblyClient } from '../../integrations/sync/assembly-client';
 
 /**
  * Service for script processing operations
@@ -33,88 +35,155 @@ export class ScriptService {
       logger.info(PREFIXES.SCRIPT, `Voice generation: ${generateVoiceOver ? 'enabled' : 'disabled'}`);
       logger.info(PREFIXES.SCRIPT, `Audio synchronization: ${syncAudio ? 'enabled' : 'disabled'}`);
       
+      // If voice generation is not enabled, just process the script directly
+      if (!generateVoiceOver || !voiceId) {
+        logger.info(PREFIXES.SCRIPT, 'Voice generation disabled, processing script directly');
+        return await this.processScriptDirectly(script, tag);
+      }
+      
+      // CORRECTED FLOW: Parse script into sections first, then process each section separately
+      
       // Step 1: Parse script into sections
+      logger.info(PREFIXES.SCRIPT, 'Parsing script into sections');
       const sections = sectionParser.parseScriptIntoSections(script);
+      logger.info(PREFIXES.SCRIPT, `Script split into ${sections.length} sections`);
       
       // Step 2: Extract points from each section
       const sectionsWithPoints = pointExtractor.extractPointsFromSections(sections);
       
-      // Step 3: Find videos for each point
-      const processedSections = await this.findVideosForSections(sectionsWithPoints, tag);
+      // Step 3: Process each section separately
+      const processedSections: ProcessedSection[] = [];
+      let previousSectionEndTime = 0;
       
-      // Step 4 (Optional): Generate voice-overs and synchronize with points
-      if (generateVoiceOver && voiceId) {
-        logger.info(PREFIXES.SCRIPT, 'Starting voice-over generation');
+      for (let i = 0; i < sectionsWithPoints.length; i++) {
+        const section = sectionsWithPoints[i];
+        if (!section) {
+          logger.warn(PREFIXES.SCRIPT, `Skipping undefined section at index ${i}`);
+          continue;
+        }
         
-        // Process each section for voice generation
-        let previousSectionEndTime = 0; // Track the end time of the previous section
-      
-        for (let i = 0; i < processedSections.length; i++) {
-          const section = processedSections[i];
+        logger.info(PREFIXES.SCRIPT, `Processing section ${i + 1}/${sectionsWithPoints.length}: ${section.id}`);
+        
+        try {
+          // Step 3.1: Generate voice-over for this section
+          const sectionText = section.text || '';
+          logger.info(PREFIXES.SCRIPT, `Generating voice-over for section ${section.id} (${sectionText.length} chars)`);
           
-          // Skip if section is undefined (shouldn't happen, but TypeScript needs this check)
-          if (!section) {
-            logger.warn(PREFIXES.SCRIPT, `Section at index ${i} is undefined, skipping`);
+          const voiceOver = await voiceService.generateVoiceOver(sectionText, voiceId);
+          logger.info(PREFIXES.SCRIPT, `Voice-over generation initiated for section ${section.id}. ID: ${voiceOver.id}`);
+          
+          // Wait for voice-over to complete
+          const completedVoiceOver = await this.waitForVoiceOverCompletion(voiceOver.id);
+          
+          if (!completedVoiceOver || !completedVoiceOver.audioUrl) {
+            logger.error(PREFIXES.SCRIPT, `Voice-over generation failed for section ${section.id}, skipping to next section`);
             continue;
           }
           
-          try {
-            // Generate voice-over for this section
-            logger.info(PREFIXES.SCRIPT, `Generating voice-over for section ${section.sectionId}`);
+          logger.info(PREFIXES.SCRIPT, `Voice-over completed successfully for section ${section.id}`);
+          
+          // Step 3.2: Transcribe the voice-over to get the exact spoken text with timing
+          const assemblyClient = new AssemblyClient(process.env.ASSEMBLYAI_API_KEY || '');
+          const transcript = await assemblyClient.transcribeAudio(completedVoiceOver.audioUrl);
+          
+          if (!transcript || !transcript.text) {
+            logger.error(PREFIXES.SCRIPT, `Transcription failed for section ${section.id}, skipping to next section`);
+            continue;
+          }
+          
+          logger.info(PREFIXES.SCRIPT, `Transcription completed successfully for section ${section.id}`);
+          logger.info(PREFIXES.SCRIPT, `Transcript length: ${transcript.text.length} characters`);
+          
+          // Step 3.3: Segment the transcript based on the original section's points
+          const segmentedSection = transcriptSegmenter.segmentSectionTranscript(
+            transcript.text,
+            transcript.words || [],
+            section
+          );
+          
+          // Step 3.4: Find videos for this section
+          const processedSectionResult = await this.findVideosForSections([segmentedSection], tag);
+          const processedSection = processedSectionResult[0];
+          
+          if (!processedSection) {
+            logger.error(PREFIXES.SCRIPT, `Failed to process section ${section.id}, skipping to next section`);
+            continue;
+          }
+          
+          // Step 3.5: Synchronize the voice-over with the points if requested
+          if (syncAudio) {
+            logger.info(PREFIXES.SCRIPT, `Synchronizing voice-over for section ${section.id}`);
             
-            // Combine all point texts into a single text for the voice-over
-            const fullText = section.points.map(point => point.text).join(' ');
+            // Pass the transcript to avoid redundant transcription
+            const transcriptForSync = { text: transcript.text, words: transcript.words };
+            const pointsWithTiming = await syncService.synchronizeVoiceOverWithPoints(
+              completedVoiceOver.id,
+              processedSection,
+              previousSectionEndTime,
+              transcriptForSync
+            );
             
-            // Generate the voice-over
-            const voiceOver = await voiceService.generateVoiceOver(fullText, voiceId);
+            // Update the processed section with timing information
+            processedSection.points = pointsWithTiming;
             
-            // Store the voice-over ID in the section
-            section.voiceOverId = voiceOver.id;
-            
-            // Wait for voice-over to complete (in a real-world scenario, this would be handled by a webhook)
-            // For demo purposes, we'll poll for completion indefinitely until it completes or fails
-            let completedVoiceOver = await this.waitForVoiceOverCompletion(voiceOver.id);
-            
-            if (completedVoiceOver && completedVoiceOver.audioUrl) {
-              // Store the audio URL in the section
-              section.audioUrl = completedVoiceOver.audioUrl;
-              
-              // Step 5 (Optional): Synchronize voice-over with points
-              if (syncAudio) {
-                logger.info(PREFIXES.SCRIPT, `Synchronizing voice-over for section ${section.sectionId}`);
-                logger.info(PREFIXES.SCRIPT, `Using previous section end time: ${previousSectionEndTime}ms`);
-                
-                // Synchronize the voice-over with the points, passing the previous section end time
-                const pointsWithTiming = await syncService.synchronizeVoiceOverWithPoints(
-                  voiceOver.id, 
-                  section, 
-                  previousSectionEndTime
-                );
-                
-                if (pointsWithTiming) {
-                  // Update the previous section end time for the next section
-                  previousSectionEndTime = section.sectionEndTime || 0;
-                  
-                  logger.info(PREFIXES.SCRIPT, `Successfully synchronized ${pointsWithTiming.length} points with timing`);
-                  logger.info(PREFIXES.SCRIPT, `Section ${section.sectionId} ends at ${previousSectionEndTime}ms`);
-                }
+            // Update the end time for the next section
+            if (pointsWithTiming && pointsWithTiming.length > 0) {
+              const lastPoint = pointsWithTiming[pointsWithTiming.length - 1];
+              if (lastPoint) {
+                previousSectionEndTime = (lastPoint.endTime || 0) + 0.5; // Add a small gap between sections
               }
             }
-          } catch (error) {
-            logger.error(PREFIXES.SCRIPT, `Error processing voice-over for section ${section.sectionId}`, error);
-            // Continue with other sections even if this one fails
           }
+          
+          // Add voice-over information to the processed section
+          processedSection.voiceOverId = completedVoiceOver.id;
+          processedSection.audioUrl = completedVoiceOver.audioUrl;
+          
+          // Add the processed section to our results
+          processedSections.push(processedSection);
+          
+        } catch (error) {
+          logger.error(PREFIXES.SCRIPT, `Error processing section ${section.id}`, error);
+          // Continue with other sections even if this one fails
         }
       }
       
+      if (processedSections.length === 0) {
+        logger.error(PREFIXES.SCRIPT, 'All sections failed to process, falling back to direct processing');
+        return await this.processScriptDirectly(script, tag);
+      }
+      
       logger.info(PREFIXES.SCRIPT, 'Script processing completed successfully');
-      logger.info(PREFIXES.SCRIPT, `Processed ${processedSections.length} sections with videos`);
+      logger.info(PREFIXES.SCRIPT, `Processed ${processedSections.length}/${sectionsWithPoints.length} sections with videos and timing`);
       
       return processedSections;
     } catch (error) {
-      logger.error(PREFIXES.SCRIPT, 'Error processing script', error);
-      throw error;
+      logger.error(PREFIXES.SCRIPT, 'Error in script processing', error);
+      // In case of any error, fall back to direct processing
+      return await this.processScriptDirectly(request.script, request.tag);
     }
+  }
+  
+  /**
+   * Process the script directly without voice-over generation
+   * This is used as a fallback when voice-over generation fails
+   */
+  private async processScriptDirectly(script: string, tag: string): Promise<ProcessedSection[]> {
+    logger.info(PREFIXES.SCRIPT, 'Processing script directly (fallback method)');
+    
+    // Step 1: Parse script into sections
+    const sections = sectionParser.parseScriptIntoSections(script);
+    
+    // Step 2: Extract points from each section
+    const sectionsWithPoints = pointExtractor.extractPointsFromSections(sections);
+    
+    // Step 3: Find videos for each point
+    const processedSections = await this.findVideosForSections(sectionsWithPoints, tag);
+    
+    logger.info(PREFIXES.SCRIPT, 'Direct script processing completed successfully');
+    logger.info(PREFIXES.SCRIPT, `Processed ${processedSections.length} sections with videos`);
+    
+    return processedSections;
   }
   
   /**

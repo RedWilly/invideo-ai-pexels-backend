@@ -10,106 +10,73 @@
           "videoUrl": "https://videos.pexels.com/video-files/20562335/20562335-hd_1920_1080_30fps.mp4",
           "videoThumbnail": "https://images.pexels.com/videos/20562335/drone-thailand-hat-yai-hill-history-20562335.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
           "startTime": 0,
-          "endTime": 1520
+          "endTime": 1560,
+          "duration": 1560
         },
         {
           "text": "that stretches far beyond the story of Adam as the very first human.",
           "videoId": "30854648",
           "videoUrl": "https://videos.pexels.com/video-files/30854648/13194338_640_360_30fps.mp4",
           "videoThumbnail": "https://images.pexels.com/videos/30854648/pexels-photo-30854648.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
-          "startTime": 1520,
-          "endTime": 6080
+          "startTime": 1560,
+          "endTime": 6320,
+          "duration": 4760
         },
         {
           "text": "Our tale begins long before the Garden of Eden",
           "videoId": "29786449",
           "videoUrl": "https://videos.pexels.com/video-files/29786449/12798537_640_360_30fps.mp4",
           "videoThumbnail": "https://images.pexels.com/videos/29786449/pexels-photo-29786449.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
-          "startTime": 6080,
-          "endTime": 8680
+          "startTime": 6320,
+          "endTime": 9240,
+          "duration": 2920
         },
         {
           "text": "in the dusty scrolls and clay tablets of ancient civilizations.",
-          "videoId": "32067579",
-          "videoUrl": "https://videos.pexels.com/video-files/32067579/13668735_640_360_25fps.mp4",
-          "videoThumbnail": "https://images.pexels.com/videos/32067579/old-huge-plane-32067579.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
-          "startTime": 8680,
-          "endTime": 13600
+          "videoId": "4904266",
+          "videoUrl": "https://videos.pexels.com/video-files/4904266/4904266-hd_2048_1080_25fps.mp4",
+          "videoThumbnail": "https://images.pexels.com/videos/4904266/pexels-photo-4904266.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
+          "startTime": 9240,
+          "endTime": 14160,
+          "duration": 4920
         },
         {
           "text": "In those early days, storytellers recorded their own versions of how people came to be",
           "videoId": "10302787",
           "videoUrl": "https://videos.pexels.com/video-files/10302787/10302787-hd_1366_720_25fps.mp4",
           "videoThumbnail": "https://images.pexels.com/videos/10302787/bedroom-female-old-photos-photo-album-10302787.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
-          "startTime": 13600,
-          "endTime": 18600
+          "startTime": 14160,
+          "endTime": 18800,
+          "duration": 4640
         },
         {
           "text": "and they painted a picture far richer and more complex than a single creation event.",
           "videoId": "5740482",
           "videoUrl": "https://videos.pexels.com/video-files/5740482/5740482-hd_1920_1080_25fps.mp4",
           "videoThumbnail": "https://images.pexels.com/videos/5740482/goddess-goddess-laksmi-goddess-laxi-goddess-of-wealth-5740482.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
-          "startTime": 18600,
-          "endTime": 23980
+          "startTime": 18800,
+          "endTime": 24620,
+          "duration": 5820
         }
       ],
-      "voiceOverId": "014b2e12-3501-11f0-874c-ae5f0f4e933b",
-      "audioUrl": "https://87c129bea46e5e69d2d92f9b9ef83ca8.r2.cloudflarestorage.com/cdk-ttsopenai-gpt-prod-upload-bucket/flare_uploaded/663437/20250519_223129_031192/Welcome_to_a_journey_through_time_that_stretches_f.mp3?response-content-type=application%2Foctet-stream&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=c059c5e08a0dd199cb0fb22ee31dad1b%2F20250519%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250519T223146Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=dc5ee38627b493be4c5b854ad1a3850817ab6301fe544b721544480cfd600d8b"
+      "voiceOverId": "cdf55ffe-364c-11f0-a609-3e45d0f7c30d",
+      "audioUrl": "https://87c129bea46e5e69d2d92f9b9ef83ca8.r2.cloudflarestorage.com/cdk-ttsopenai-gpt-prod-upload-bucket/flare_uploaded/663437/20250521_140634_945680/Welcome_to_a_journey_through_time_that_stretches_f.mp3?response-content-type=application%2Foctet-stream&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=c059c5e08a0dd199cb0fb22ee31dad1b%2F20250521%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250521T140645Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=972f6594142d4e596fa347a8f9c579907941bcc9e1a039ff2fed512fab4aeeea"
     },
     {
       "sectionId": "section2",
       "points": [
         {
           "text": "Imagine ancient Sumer, where scribes etched the Enuma Elish",
-          "videoId": "31996068",
-          "videoUrl": "https://videos.pexels.com/video-files/31996068/13635856_640_360_30fps.mp4",
-          "videoThumbnail": "https://images.pexels.com/videos/31996068/18th-century-architecture-4k-backgrounds-4k-drone-footage-4k-drone-video-31996068.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
-          "startTime": 23980,
-          "endTime": 27460
-        },
-        {
-          "text": "onto clay tablets around two thousand years before our era.",
-          "videoId": "6722923",
-          "videoUrl": "https://videos.pexels.com/video-files/6722923/6722923-hd_1920_1080_25fps.mp4",
-          "videoThumbnail": "https://images.pexels.com/videos/6722923/pexels-photo-6722923.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
-          "startTime": 27460,
-          "endTime": 31500
-        },
-        {
-          "text": "In that Babylonian creation epic, the great god Marduk fashions humankind",
-          "videoId": "6722923",
-          "videoUrl": "https://videos.pexels.com/video-files/6722923/6722923-hd_1920_1080_25fps.mp4",
-          "videoThumbnail": "https://images.pexels.com/videos/6722923/pexels-photo-6722923.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
-          "startTime": 31500,
-          "endTime": 35900
-        },
-        {
-          "text": "from the blood of a defeated god, Kingu, after a cosmic battle.",
-          "videoId": "6028950",
-          "videoUrl": "https://videos.pexels.com/video-files/6028950/6028950-hd_1920_1080_25fps.mp4",
-          "videoThumbnail": "https://images.pexels.com/videos/6028950/church-church-building-interior-decoration-6028950.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
-          "startTime": 35900,
-          "endTime": 40220
-        },
-        {
-          "text": "Humanity’s birth in this story is an act of sacrifice by",
-          "videoId": "8165214",
-          "videoUrl": "https://videos.pexels.com/video-files/8165214/8165214-hd_1920_1080_30fps.mp4",
-          "videoThumbnail": "https://images.pexels.com/videos/8165214/administration-adult-aging-process-alone-8165214.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
-          "startTime": 40220,
-          "endTime": 43660
-        },
-        {
-          "text": "divine beings and a way to relieve the gods of labor.",
-          "videoId": "3987652",
-          "videoUrl": "https://videos.pexels.com/video-files/3987652/3987652-hd_1280_720_24fps.mp4",
-          "videoThumbnail": "https://images.pexels.com/videos/3987652/pexels-photo-3987652.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
-          "startTime": 43660,
-          "endTime": 47400
+          "videoId": "5416362",
+          "videoUrl": "https://videos.pexels.com/video-files/5416362/5416362-hd_2048_1080_25fps.mp4",
+          "videoThumbnail": "https://images.pexels.com/videos/5416362/pexels-photo-5416362.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
+          "startTime": 24620.5,
+          "endTime": 28680.5,
+          "duration": 4060
         }
       ],
-      "voiceOverId": "12711fee-3501-11f0-96ad-567c978f8f5a",
-      "audioUrl": "https://87c129bea46e5e69d2d92f9b9ef83ca8.r2.cloudflarestorage.com/cdk-ttsopenai-gpt-prod-upload-bucket/flare_uploaded/663437/20250519_223156_924159/Imagine_ancient_Sumer__where_scribes_etched_the_En.mp3?response-content-type=application%2Foctet-stream&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=c059c5e08a0dd199cb0fb22ee31dad1b%2F20250519%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250519T223206Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=24769fce12f5d65b54a55be12638e13bf59299e23e50c6b1b1e8b62e5fdb5cfc"
+      "voiceOverId": "db116e6c-364c-11f0-bdbe-463d3cf59161",
+      "audioUrl": "https://87c129bea46e5e69d2d92f9b9ef83ca8.r2.cloudflarestorage.com/cdk-ttsopenai-gpt-prod-upload-bucket/flare_uploaded/663437/20250521_140656_941951/Imagine_ancient_Sumer__where_scribes_etched_the_En.mp3?response-content-type=application%2Foctet-stream&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=c059c5e08a0dd199cb0fb22ee31dad1b%2F20250521%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250521T140704Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=0d95514411d7d515cb83225ae20e3b85f57623744fa151939953076e61d51b8c"
     }
   ]
 }
