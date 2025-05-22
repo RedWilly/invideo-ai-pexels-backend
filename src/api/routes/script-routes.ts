@@ -16,8 +16,14 @@ export function configureScriptRoutes(app: Elysia): Elysia {
   
   return app.post(
     API.ROUTES.SCRIPT_PROCESSING,
-    async ({ body }) => {
-      return await scriptController.processScript(body);
+    ({ body, set }) => {
+      // Use the new asynchronous processing approach
+      const result = scriptController.processScript(body);
+      
+      // Set status code to 201 Created
+      set.status = 201;
+      
+      return result;
     },
     {
       body: t.Object({

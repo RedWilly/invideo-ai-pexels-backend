@@ -2,7 +2,9 @@
  * Controller for script processing endpoints
  */
 import { scriptService } from '../../services/script/script-service';
+import { jobService } from '../../services/job/job-service';
 import type { ScriptProcessingRequest, ScriptProcessingResponse } from '../../types/script-types';
+import { JobStatus } from '../../types/job-types';
 import { logger, PREFIXES } from '../../utils/logger';
 
 /**
@@ -10,12 +12,11 @@ import { logger, PREFIXES } from '../../utils/logger';
  */
 export class ScriptController {
   /**
-   * Process a script and find videos for each point
-   * Optionally generate voice-overs and synchronize them with points
+   * Process a script asynchronously and return a job ID immediately
    * @param request Script processing request
-   * @returns Script processing response
+   * @returns Job ID for tracking the processing
    */
-  async processScript(request: ScriptProcessingRequest): Promise<ScriptProcessingResponse> {
+  processScript(request: ScriptProcessingRequest): { jobId: string } {
     try {
       logger.info(PREFIXES.API, `Received script processing request with tag: "${request.tag}"`);
       logger.info(PREFIXES.API, `Script length: ${request.script.length} characters`);
@@ -28,6 +29,31 @@ export class ScriptController {
       if (request.syncAudio) {
         logger.info(PREFIXES.API, 'Audio synchronization requested');
       }
+      
+      // Create a new job for this request
+      const jobId = jobService.createScriptProcessingJob(request);
+      logger.info(PREFIXES.API, `Created job ${jobId} for script processing`);
+      
+      // Start processing in the background
+      this.processScriptInBackground(jobId, request);
+      
+      // Return the job ID immediately
+      return { jobId };
+    } catch (error) {
+      logger.error(PREFIXES.API, 'Error creating script processing job', error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Process a script in the background and update job status
+   * @param jobId Job ID
+   * @param request Script processing request
+   */
+  private async processScriptInBackground(jobId: string, request: ScriptProcessingRequest): Promise<void> {
+    try {
+      // Update job status to processing
+      jobService.updateJobStatus(jobId, JobStatus.PROCESSING, 'Script processing started', 10);
       
       // Process the script with all options
       const result = await scriptService.processScript(request);
@@ -78,17 +104,20 @@ export class ScriptController {
         };
       });
       
-      return { 
+      // Complete the job with the results
+      const response: ScriptProcessingResponse = { 
         success: true, 
         data: cleanedResult 
       };
-    } catch (error) {
-      logger.error(PREFIXES.API, 'Error processing script', error);
       
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
-      };
+      jobService.completeScriptProcessingJob(jobId, response);
+      
+    } catch (error) {
+      logger.error(PREFIXES.API, `Error processing script for job ${jobId}`, error);
+      
+      // Update job status to failed
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      jobService.failJob(jobId, errorMessage);
     }
   }
 }

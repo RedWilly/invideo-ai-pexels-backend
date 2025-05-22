@@ -70,8 +70,8 @@
           "videoId": "5416362",
           "videoUrl": "https://videos.pexels.com/video-files/5416362/5416362-hd_2048_1080_25fps.mp4",
           "videoThumbnail": "https://images.pexels.com/videos/5416362/pexels-photo-5416362.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
-          "startTime": 24060.5,
-          "endTime": 27540.5,
+          "startTime": 24060,
+          "endTime": 27540,
           "duration": 3480
         },
         {
@@ -79,8 +79,8 @@
           "videoId": "6722923",
           "videoUrl": "https://videos.pexels.com/video-files/6722923/6722923-hd_1920_1080_25fps.mp4",
           "videoThumbnail": "https://images.pexels.com/videos/6722923/pexels-photo-6722923.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
-          "startTime": 27540.5,
-          "endTime": 31260.5,
+          "startTime": 27540,
+          "endTime": 31260,
           "duration": 3720
         },
         {
@@ -88,8 +88,8 @@
           "videoId": "6722923",
           "videoUrl": "https://videos.pexels.com/video-files/6722923/6722923-hd_1920_1080_25fps.mp4",
           "videoThumbnail": "https://images.pexels.com/videos/6722923/pexels-photo-6722923.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
-          "startTime": 31260.5,
-          "endTime": 35900.5,
+          "startTime": 31260,
+          "endTime": 35900,
           "duration": 4640
         },
         {
@@ -97,8 +97,8 @@
           "videoId": "6028950",
           "videoUrl": "https://videos.pexels.com/video-files/6028950/6028950-hd_1920_1080_25fps.mp4",
           "videoThumbnail": "https://images.pexels.com/videos/6028950/church-church-building-interior-decoration-6028950.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
-          "startTime": 35900.5,
-          "endTime": 40600.5,
+          "startTime": 35900,
+          "endTime": 40600,
           "duration": 4700
         }
       ],

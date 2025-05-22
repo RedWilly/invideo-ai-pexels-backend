@@ -4,15 +4,18 @@
 
 export const API = {
   ROUTES: {
+    // Public API endpoints
     SCRIPT_PROCESSING: '/process-script',
     HEALTH: '/health',
-    VOICE: '/voice',
-    VOICE_GENERATE: '/voice/generate',
-    VOICE_WEBHOOK: '/voice/webhook',
-    SYNC: '/sync',
-    SYNC_VOICE_OVER: '/sync/voice-over',
-    SYNC_GENERATE: '/sync/generate',
-    SYNC_PROCESS_COMPLETED: '/sync/process-completed'
+    VOICE_WEBHOOK: '/voice/webhook', // Must be public for external service callbacks
+    
+    // Internal endpoints - not meant for direct API consumer use, unless you are a power user
+    VOICE: '/internal/voice',
+    VOICE_GENERATE: '/internal/voice/generate',
+    SYNC: '/internal/sync',
+    SYNC_VOICE_OVER: '/internal/sync/voice-over',
+    SYNC_GENERATE: '/internal/sync/generate',
+    SYNC_PROCESS_COMPLETED: '/internal/sync/process-completed'
   },
   RESPONSE: {
     SUCCESS: 'success',
@@ -45,6 +48,7 @@ export const LOGGING = {
     VIDEO: '🎥 VIDEO',
     VOICE: '🔊 VOICE',
     SYNC: '🔄 SYNC',
+    JOB: '📋 JOB',
     ERROR: '❌ ERROR',
     SUCCESS: '✅ SUCCESS'
   }
